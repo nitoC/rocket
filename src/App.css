@@ -31,6 +31,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 1100px;
+  margin: auto;
 }
 .container {
   padding: 2rem;
@@ -45,7 +47,8 @@ input {
   background-color: var(--stake);
   border-radius: 1rem;
   padding: 1.5rem;
-  margin-top: 1rem;
+  max-width: 1100px;
+  margin: 1rem auto;
 }
 .stake * {
   font-weight: 500;
