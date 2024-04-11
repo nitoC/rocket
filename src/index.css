@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  font-family: "Inter", sans-serif;
+}
+button {
+  border: none;
+  outline: none;
+  padding: 0.6em 1.2em;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
