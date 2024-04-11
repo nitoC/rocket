@@ -14,11 +14,13 @@ import './App.css'
 function App() {
   const eth = {
     name: "ETH",
-    icon: "eth.png"
+    icon: "eth.png",
+    usd: "0.00"
   }
   const reth = {
     name: "rETH",
-    icon: "reth.svg"
+    icon: "reth.svg",
+    usd: "0.00"
   }
   const [isDarkTheme, setIsDarkTheme] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -28,6 +30,25 @@ function App() {
     second: reth
   })
 
+  const [ethState, setethState] = useState('0.00')
+  const [rethState, setrethState] = useState('0.000000')
+  const [ethVal, setethVal] = useState()
+
+
+  const handleEth = async (e) => {
+    const ethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR')
+    let data = await ethData.json()
+    console.log(data.USD)
+    setethState(data.USD)
+    setethState(parseFloat(e.target.value) * parseFloat(data.USD))
+  }
+  const handleReth = async (e) => {
+    const ethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=rETH&tsyms=BTC,USD,EUR')
+
+    let data = await ethData.json()
+    setrethState(parseFloat(e.target.value) * parseFloat(data.USD))
+    //setrethState(e.target.value)
+  }
 
   const handleToggle = () => {
     if (initialize.first.name === 'ETH') {
@@ -52,6 +73,19 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchCost = async () => {
+
+      const ethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=rETH&tsyms=BTC,USD,ETH')
+      let data = await ethData.json()
+      console.log(data.ETH)
+      setethVal(data.ETH)
+    }
+    fetchCost()
+
+
+  }, [])
+
 
   return (
     <div className={`container ${isDarkTheme ? 'dark' : 'light'}`}>
@@ -70,9 +104,9 @@ function App() {
           </div>
           <div className='stake-input-container'>
             <div className='stake-image'><img src={initialize.first.icon} alt='crypto icons' className='stake-icon' /></div>
-            <input type="text" className='stake-input' placeholder='0.00' />
+            <input onChange={handleEth} type="text" className='stake-input' placeholder='0.00' />
             <div className='stake-input-text'>
-              ≈ $0.00 USD
+              ≈ ${isNaN(ethState) || typeof ethState !== 'number' ? "0.00" : ethState} USD
             </div>
           </div>
           <div className='toggle-wrapper'>
@@ -87,9 +121,9 @@ function App() {
           </div>
           <div className='stake-input-container'>
             <div className='stake-image'><img src={initialize.second.icon} alt='crypto icons' className='stake-icon' /></div>
-            <input type="text" className='stake-input' placeholder='0.000000' />
+            <input onChange={handleReth} type="text" className='stake-input' placeholder='0.000000' />
             <div className='stake-input-text'>
-              ≈ $0.00 USD
+              ≈ ${isNaN(rethState) || typeof rethState !== 'number' ? "0.00" : rethState} USD
             </div>
           </div>
           <div className='stake-sub-menu-container'>
@@ -107,7 +141,7 @@ function App() {
               <p className='sub-text'>Exchange Rate</p>
               <button className='sub-btn'>
 
-                1 rETH = 1.10324 ETH
+                1 rETH = {ethVal} ETH
                 <span className='sub-icon'>
                   <RxCaretDown />
                 </span>
