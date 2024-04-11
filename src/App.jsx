@@ -12,15 +12,16 @@ import { TbTransferVertical } from "react-icons/tb";
 import './App.css'
 
 function App() {
-  const eth = {
+  let eth = {
     name: "ETH",
     icon: "eth.png",
-    usd: "0.00"
+    usd: "0.00",
+
   }
-  const reth = {
+  let reth = {
     name: "rETH",
     icon: "reth.svg",
-    usd: "0.00"
+    usd: "0.00",
   }
   const [isDarkTheme, setIsDarkTheme] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -31,26 +32,37 @@ function App() {
   })
 
   const [ethState, setethState] = useState('0.00')
-  const [rethState, setrethState] = useState('0.000000')
-  const [ethVal, setethVal] = useState()
+  const [rethState, setrethState] = useState('0.00')
+  const [ethVal, setethVal] = useState('0.00')
+  const [ethVals, setethVals] = useState('0.00')
+  const [rethVal, setrethVal] = useState('0.00000')
 
 
   const handleEth = async (e) => {
-    const ethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR')
+    const ethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,RETH')
     let data = await ethData.json()
     console.log(data.USD)
-    setethState(data.USD)
+    console.log(data.RETH, 'reth')
+    console.log(rethVal)
+    setrethVal(parseFloat(data.RETH) * parseFloat(e.target.value))
     setethState(parseFloat(e.target.value) * parseFloat(data.USD))
+    setrethState(parseFloat(e.target.value) * parseFloat(data.USD))
   }
   const handleReth = async (e) => {
-    const ethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=rETH&tsyms=BTC,USD,EUR')
+    const rethData = await fetch('https://min-api.cryptocompare.com/data/price?fsym=rETH&tsyms=BTC,USD,ETH')
 
-    let data = await ethData.json()
+    let data = await rethData.json()
+    setethVal(parseFloat(data.ETH) * parseFloat(e.target.value))
+
     setrethState(parseFloat(e.target.value) * parseFloat(data.USD))
+    setethState(parseFloat(e.target.value) * parseFloat(data.USD))
+
     //setrethState(e.target.value)
   }
 
   const handleToggle = () => {
+    setrethVal('')
+    setethVal('')
     if (initialize.first.name === 'ETH') {
       setinitialize({ first: reth, second: eth })
     } else {
@@ -104,7 +116,7 @@ function App() {
           </div>
           <div className='stake-input-container'>
             <div className='stake-image'><img src={initialize.first.icon} alt='crypto icons' className='stake-icon' /></div>
-            <input onChange={handleEth} type="text" className='stake-input' placeholder='0.00' />
+            <input onChange={initialize.first.name === 'ETH' ? handleEth : handleReth} type="number" className='stake-input' placeholder='0.00' readOnly={initialize.first.readOnly && ethVal} />
             <div className='stake-input-text'>
               ≈ ${isNaN(ethState) || typeof ethState !== 'number' ? "0.00" : ethState} USD
             </div>
@@ -121,7 +133,7 @@ function App() {
           </div>
           <div className='stake-input-container'>
             <div className='stake-image'><img src={initialize.second.icon} alt='crypto icons' className='stake-icon' /></div>
-            <input onChange={handleReth} type="text" className='stake-input' placeholder='0.000000' />
+            <input onChange={initialize.second.name === 'rETH' ? handleEth : handleReth} type="number" className='stake-input' placeholder='0.000000' readOnly value={initialize.second.name === 'rETH' ? rethVal : ethVal} />
             <div className='stake-input-text'>
               ≈ ${isNaN(rethState) || typeof rethState !== 'number' ? "0.00" : rethState} USD
             </div>
